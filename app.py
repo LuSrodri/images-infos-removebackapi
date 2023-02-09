@@ -23,13 +23,13 @@ bucket = storage_client.get_bucket(bucket_name)
 
 @app.route("/", methods=['GET', 'POST'])
 @cross_origin()
-async def removebackapi():
+def removebackapi():
     if request.method == "GET":
         return '<h1>Removeback API</h1>'
 
 @app.route("/removeback", methods=['GET', 'POST'])
 @cross_origin()
-async def upload_file():
+def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
