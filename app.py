@@ -1,6 +1,7 @@
 import os
 import uuid
 from flask import Flask, flash, jsonify, make_response, request, redirect, url_for
+from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 from rembg import remove
 from PIL import Image
@@ -21,12 +22,14 @@ bucket_name = "imagesinfos"
 bucket = storage_client.get_bucket(bucket_name)
 
 @app.route("/", methods=['GET', 'POST'])
-def removebackapi():
+@cross_origin()
+async def removebackapi():
     if request.method == "GET":
         return '<h1>Removeback API</h1>'
 
 @app.route("/removeback", methods=['GET', 'POST'])
-def upload_file():
+@cross_origin()
+async def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
