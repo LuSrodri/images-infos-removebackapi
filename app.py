@@ -6,6 +6,9 @@ from werkzeug.utils import secure_filename
 from rembg import remove
 from PIL import Image
 from google.cloud import storage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 UPLOAD_FOLDER = './'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -31,7 +34,7 @@ def removebackapi():
 @cross_origin()
 def upload_file():
     if request.method == 'POST':
-        if request.headers.get("X-RapidAPI-Proxy-Secret") == os.environ.get("X-RapidAPI-Proxy-Secret"):
+        if request.headers.getlist()["X-RapidAPI-Proxy-Secret"] == os.environ["X-RapidAPI-Proxy-Secret"]:
             # check if the post request has the file part
             if 'file' not in request.files:
                 flash('No file part')
