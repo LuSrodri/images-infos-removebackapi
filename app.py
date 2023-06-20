@@ -34,7 +34,11 @@ def removebackapi():
 @cross_origin()
 def upload_file():
     if request.method == 'POST':
-        if request.headers.get("X-RapidAPI-Proxy-Secret") == os.getenv("X-RapidAPI-Proxy-Secret"):
+        print(request.headers.get("X-RapidAPI-Proxy-Secret"))
+        print(os.environ.get("X_RAPIDAPI_PROXY_SECRET"))
+        print(request.headers.get("X-RapidAPI-Proxy-Secret") == os.environ.get("X_RAPIDAPI_PROXY_SECRET"))
+              
+        if request.headers.get("X-RapidAPI-Proxy-Secret") == os.environ.get("X_RAPIDAPI_PROXY_SECRET"):
             # check if the post request has the file part
             if 'file' not in request.files:
                 flash('No file part')
