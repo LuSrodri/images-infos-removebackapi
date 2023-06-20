@@ -31,30 +31,33 @@ def removebackapi():
 @cross_origin()
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(str(uuid.uuid4()) + '.png')
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if request.headers.get("X-RapidAPI-Proxy-Secret") == os.environ.get("X-RapidAPI-Proxy-Secret"):
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit a empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(str(uuid.uuid4()) + '.png')
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            input = Image.open(filename)
-            output = remove(input)
-            output.save(filename)
+                input = Image.open(filename)
+                output = remove(input)
+                output.save(filename)
 
-            blob = bucket.blob(filename)
-            blob.upload_from_filename(filename)
+                blob = bucket.blob(filename)
+                blob.upload_from_filename(filename)
 
-            os.unlink(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
-            return jsonify(publicUrl=("https://storage.googleapis.com/imagesinfos/" + filename))
+                os.unlink(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                
+                return jsonify(publicUrl=("https://storage.googleapis.com/imagesinfos/" + filename))
+        else:
+            return make_response(jsonify({'error': 'Unauthorized access'}), 401)
         
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
