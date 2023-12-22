@@ -29,6 +29,12 @@ bucket = storage_client.get_bucket(bucket_name)
 def removebackapi():
     if request.method == "GET":
         return '<h1>Removeback API</h1>'
+    
+@app.route("/ping", methods=['GET', 'POST'])
+@cross_origin()
+def ping():
+    if request.method == "GET":
+        return '<h1>pong</h1>'
 
 @app.route("/removeback", methods=['GET', 'POST'])
 @cross_origin()
