@@ -3,7 +3,7 @@ import uuid
 from flask import Flask, flash, jsonify, make_response, request, redirect, url_for
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
 from google.cloud import storage
 from dotenv import load_dotenv
@@ -56,7 +56,9 @@ def upload_file():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 input = Image.open(filename)
-                output = remove(input)
+                model_name = "silueta"
+                session = new_session(model_name)
+                output = remove(input, session=session, post_process_mask=True)
                 output.save(filename)
 
                 blob = bucket.blob(filename)
